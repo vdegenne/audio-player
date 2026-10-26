@@ -1,33 +1,43 @@
 {
-  "name": "@vdegenne/audio-player",
-  "version": "0.1.0",
-  "description": "",
-  "type": "module",
-  "main": "",
-  "module": "",
-  "exports": {
-    ".": {}
-  },
-  "types": "",
-  "files": [],
-  "scripts": {
-    "build": "wireit"
-  },
-  "devDependencies": {
-    "typescript": "^7.0.2",
-    "wireit": "^0.15.0"
-  },
-  "wireit": {
-    "build": {
-      "command": "tsc --pretty",
-      "clean": "if-file-deleted",
-      "files": [
-        "./tsconfig.json",
-        "./src"
-      ],
-      "output": [
-        "./lib"
-      ]
-    }
-  }
+	"name": "@vdegenne/audio-player",
+	"version": "0.1.0",
+	"description": "",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./lib/index.js",
+			"types": "./lib/index.d.ts"
+		},
+		"./audio-player.js": {
+			"import": "./lib/audio-player.js",
+			"types": "./lib/audio-player.d.ts"
+		},
+		"./reverb.js": {
+			"import": "./lib/reverb.js",
+			"types": "./lib/reverb.d.ts"
+		}
+	},
+	"files": [
+		"./lib/"
+	],
+	"scripts": {
+		"build": "wireit"
+	},
+	"devDependencies": {
+		"typescript": "^7.0.2",
+		"wireit": "^0.15.0"
+	},
+	"wireit": {
+		"build": {
+			"command": "tsc --pretty",
+			"clean": "if-file-deleted",
+			"files": [
+				"./tsconfig.json",
+				"./src"
+			],
+			"output": [
+				"./lib"
+			]
+		}
+	}
 }
