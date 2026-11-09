@@ -3,6 +3,7 @@
 Small helper to load and play audio files in your app with the following features:
 
 - Integrated hash-based audio cache
+- Lazy audio loading: cached audio is reused without invoking the audio loader
 - Volume control and boosting (values above `1` are supported)
 - Optional reverb effects
 - Asynchronous playback with cancellation support
@@ -12,18 +13,29 @@ Small helper to load and play audio files in your app with the following feature
 
 ### Initialize the player
 
-Create an `AudioPlayer` with a provider function that returns an audio key and its data. The key is used to cache decoded audio.
+Create an `AudioPlayer` with a provider function that returns an audio key and a lazy audio loader. The key identifies the audio and is used to cache its decoded `AudioBuffer`.
 
 ```ts
 import {AudioPlayer} from '@vdegenne/audio-player'
 
 const player = new AudioPlayer((name: string) => ({
 	key: name,
-	audio: fetch(name).then((response) => response.blob()),
+	audio: () => fetch(name).then((response) => response.blob()),
 }))
 ```
 
-The provider can return either an `AudioRequest` directly or a `Promise<AudioRequest>`. Audio data can be a `Blob`, an `AudioBuffer`, or a promise resolving to either.
+The provider can return either an `AudioRequest` directly or a `Promise<AudioRequest>`.
+
+An `AudioRequest` has the following shape:
+
+```ts
+interface AudioRequest {
+	key: string
+	audio: () => Promise<Blob | AudioBuffer>
+}
+```
+
+The audio loader is only called when the requested key is not already cached. This means repeated playback with the same key reuses the decoded audio without making another network request.
 
 ### Play audio
 
