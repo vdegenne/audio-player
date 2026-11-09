@@ -112,3 +112,5 @@ await playPromise
 ```
 
 `reverbLevel` controls the intensity of the effect. Reverb is disabled by default.
+
+> Important: The `key` must uniquely identify the audio content. If the content changes but the key stays the same, the previously cached audio will be reused.
