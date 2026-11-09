@@ -2,7 +2,7 @@ import {type ReverbPreset} from './reverb.js'
 
 export interface AudioRequest {
 	key: string
-	audio: Blob | AudioBuffer | Promise<Blob | AudioBuffer>
+	audio: () => Promise<Blob | AudioBuffer>
 }
 export interface AudioPlayerOptions {
 	reverb?: ReverbPreset
@@ -28,12 +28,12 @@ export class AudioPlayer<
 
 	getCachedAudio(
 		key: string,
-		audio: Blob | AudioBuffer | Promise<Blob | AudioBuffer>,
+		audio: () => Promise<Blob | AudioBuffer>,
 	): Promise<AudioBuffer> {
 		let cached = this.#audioCache.get(key)
 
 		if (!cached) {
-			cached = Promise.resolve(audio).then((value) =>
+			cached = audio().then((value) =>
 				value instanceof AudioBuffer
 					? value
 					: value
@@ -100,8 +100,8 @@ export class AudioPlayer<
 		})
 
 		const playPromise = (async () => {
-			const {key, audio: promise} = await this.#getAudio(...args)
-			const audioBuffer = await this.getCachedAudio(key, promise)
+			const {key, audio} = await this.#getAudio(...args)
+			const audioBuffer = await this.getCachedAudio(key, audio)
 
 			if (signal.aborted) throw abortError()
 
